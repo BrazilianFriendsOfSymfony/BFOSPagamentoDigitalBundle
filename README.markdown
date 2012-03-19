@@ -33,3 +33,8 @@ Este bundle está licenciado sob a licença MIT. Veja o texto da licença em:
 
     Resources/meta/LICENSE
 
+Sobre
+-----
+
+BFOSPagamentoDigitalBundle é uma iniciativa do grupo [BrazilianFriendsOfSymfony](https://github.com/BrazilianFriendsOfSymfony).
+Veja a lista de contribuintes [contribuintes](https://github.com/BrazilianFriendsOfSymfony/BFOSPagamentoDigitalBundle/contributors).
