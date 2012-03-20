@@ -16,15 +16,24 @@ use Symfony\Component\HttpFoundation\Request;
 use BFOS\PagamentoDigitalBundle\Entity\RespostaPagamento;
 use BFOS\PagamentoDigitalBundle\Entity\RespostaPagamentoItem;
 use Symfony\Bundle\DoctrineBundle\DoctrineBundle;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 class PagamentoManager
 {
     private $container;
+    /**
+     * @var \BFOS\PagamentoDigitalBundle\Entity\PagamentoRepository $repository
+     */
     private $repository;
     /**
      * @var \Symfony\Component\HttpKernel\Log\LoggerInterface $logger
      */
     private $logger;
+
+    /**
+     * @var
+     */
+    private $errors;
 
     function __construct(ContainerInterface $container)
     {
@@ -46,10 +55,21 @@ class PagamentoManager
         $errors = $validator->validate($pagamento);
 
         if (count($errors) > 0){
-            return false;
+            return $errors;
         } else {
             return true;
         }
+    }
+
+    public function persist(Pagamento $pagamento, $andFlush = true){
+        if(($errors = $this->validarPagamentoPagamentoDigital($pagamento))===true){
+            $this->repository->persist($pagamento);
+            if($andFlush){
+                $this->repository->flush();
+                return true;
+            }
+        }
+        return $errors;
     }
 
     /**
@@ -58,14 +78,17 @@ class PagamentoManager
      * @param $id
      * @return mixed
      */
-    public function redirecionarPagamento($id){
+    public function redirecionarPagamento($id, $response = null){
 
         $repositorio = $this->repository;
         $pagamento = $repositorio->find($id);
-        $pagamento->getItens();
-        $itens = $pagamento->toArray();
 
-        return $this->render('BFOSPagamentoDigitalBundle:Default:index.html.twig', array('itens' => $itens, 'email_loja'=>'financeiro@linkaweb.com.br'));
+        if(!$pagamento){
+            throw new \Exception('Pagamento nao encontrado');
+        }
+
+
+        return $this->container->get('templating')->renderResponse('BFOSPagamentoDigitalBundle:Gateway:redirecionar.html.twig', array('pagamento' => $pagamento, 'email_loja'=>'financeiro@linkaweb.com.br'));
     }
 
     public function retornoPagamentoDigital(Request $request){

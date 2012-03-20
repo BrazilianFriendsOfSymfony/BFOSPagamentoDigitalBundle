@@ -10,15 +10,15 @@
 
     <input name="email_loja" type="hidden" value="{{ email_loja }}">
 
-    {% for item in itens %}
-        <input name="produto_codigo_{{ loop.index }}" type="hidden" value="{{ item.produto_codigo }}">
-        <input name="produto_descricao_{{ loop.index }}" type="hidden" value="{{ item.produto_descricao }}">
-        <input name="produto_qtde_{{ loop.index }}" type="hidden" value="{{ item.produto_qtde }}">
-        <input name="produto_valor_{{ loop.index }}" type="hidden" value="{{ item.produto_valor }}" >
+    {% for item in pagamento.itens %}
+        <input name="produto_codigo_{{ loop.index }}" type="hidden" value="{{ item.produtoCodigo }}">
+        <input name="produto_descricao_{{ loop.index }}" type="hidden" value="{{ item.produtoDescricao }}">
+        <input name="produto_qtde_{{ loop.index }}" type="hidden" value="{{ item.produtoQuantidade }}">
+        <input name="produto_valor_{{ loop.index }}" type="hidden" value="{{ item.produtoValor }}" >
     {% endfor %}
 
-    <input name="tipo_integracao" type="hidden" value="PAD">
-    <input name="frete" type="hidden" value="{{ itens.frete }}">
+    <input name="tipo_integracao" type="hidden" value="{{ pagamento.tipoIntegracao }}">
+    <input name="frete" type="hidden" value="{{ pagamento.frete }}">
 
     {#<input type="image" src="https://a248.e.akamai.net/f/248/96284/12h/imagem.pagamentodigital.com.br/webroot/img/bt_comprar.gif" value="Comprar" alt="Comprar" border="0" align="absbottom" >#}
 
@@ -40,4 +40,4 @@
 
 </script>
 
-        {% endblock  %}
+{% endblock  %}

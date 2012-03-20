@@ -63,12 +63,12 @@ class PagamentoItem
      *
      * @var integer $produto_qtde
      *
-     * @ORM\Column(name="produto_qtde", type="integer")
+     * @ORM\Column(name="produto_quantidade", type="integer")
      *
      * @Assert\NotBlank()
      * @Assert\Max(limit=99999999999, message="O valor inserido deve conter no máximo 11 dígitos!")
      */
-    private $produto_qtde;
+    private $produto_quantidade;
 
     /**
      * Valor unitário do produto. Usar "." para separar os decimais.
@@ -179,11 +179,11 @@ class PagamentoItem
     /**
      * Set produto_qtde
      *
-     * @param integer $produtoQtde
+     * @param integer $produto_quantidade
      */
-    public function setProdutoQtde($produtoQtde)
+    public function setProdutoQuantidade($produto_quantidade)
     {
-        $this->produto_qtde = $produtoQtde;
+        $this->produto_quantidade = $produto_quantidade;
     }
 
     /**
@@ -191,9 +191,9 @@ class PagamentoItem
      *
      * @return integer 
      */
-    public function getProdutoQtde()
+    public function getProdutoQuantidade()
     {
-        return $this->produto_qtde;
+        return $this->produto_quantidade;
     }
 
     /**

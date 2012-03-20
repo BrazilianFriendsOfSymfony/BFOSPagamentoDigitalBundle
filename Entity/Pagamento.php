@@ -558,6 +558,8 @@ class Pagamento
     {
         $this->itens = new ArrayCollection();
         $this->criado_em = new \DateTime();
+        $this->tipo_integracao = 'PAD';
+        $this->frete = 0;
     }
 
     /**

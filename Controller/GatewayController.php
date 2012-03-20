@@ -5,23 +5,14 @@ namespace BFOS\PagamentoDigitalBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 
-class DefaultController extends Controller
+class GatewayController extends Controller
 {
-    /**
-     * @Route("/hello/{name}")
-     * @Template()
-     */
-    public function indexAction($name)
-    {
-        return array('name' => $name);
-    }
 
     /**
-        * @Route("/confirma-pedido/{forma}/{id}", name="confirmar_pedido")
+        * @Route("/pagamento-digital/{id}", name="pagamento_digital_redirecionar")
        **/
-    public function redirecionarAction($forma, $id) {
+    public function redirecionarAction($id) {
 
         $repositorio = $this->getDoctrine()->getRepository('BFOSPagamentoDigitalBundle:Pagamento');
         /**
@@ -32,5 +23,7 @@ class DefaultController extends Controller
         $this->pagamento = $pagamento->toArray();
 
 
+        return array('pagamento'=>$pagamento);
     }
+
 }
