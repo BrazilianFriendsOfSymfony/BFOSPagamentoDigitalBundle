@@ -6,11 +6,18 @@
 
     <parameters>
         <parameter key="bfos_pagamentodigital.pagamento_manager.class">BFOS\PagamentoDigitalBundle\PagamentoDigital\PagamentoManager</parameter>
+        <parameter key="bfos_pagamentodigital.twig_extension.class">BFOS\PagamentoDigitalBundle\Twig\TwigExtension</parameter>
     </parameters>
     <services>
         <service id="bfos_pagamentodigital.pagamento_manager" class="%bfos_pagamentodigital.pagamento_manager.class%">
             <argument type="service" id="service_container" />
         </service>
+
+        <service id="bfos_pagamentodigital.twig_extension" class="%bfos_pagamentodigital.twig_extension.class%">
+            <tag name="twig.extension"/>
+            <argument type="service" id="service_container" />
+        </service>
+
     </services>
 
 </container>

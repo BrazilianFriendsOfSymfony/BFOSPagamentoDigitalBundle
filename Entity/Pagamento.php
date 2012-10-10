@@ -3,12 +3,14 @@
 namespace BFOS\PagamentoDigitalBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 use BFOS\PagamentoDigitalBundle\Entity\PagamentoItem;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * BFOS\PagamentoDigitalBundle\Entity\Pagamento
+ * BFOSPagamentoDigitalBundle:Pagamento
  *
  * @ORM\Table(name="bfos_pagamentodigital_pagamento")
  * @ORM\Entity(repositoryClass="BFOS\PagamentoDigitalBundle\Entity\PagamentoRepository")
@@ -38,6 +40,24 @@ class Pagamento
      * @Assert\MaxLength(limit=50, message="O valor inserido deve conter no máximo 50 caracteres!")
      */
     private $id_pedido;
+
+    /**
+     * E-mail do vendedor no Pagamento Digital
+     *
+     * @var string $lojaEmail
+     *
+     * @ORM\Column(name="loja_email", type="string", length=255, nullable=true)
+     */
+    private $lojaEmail;
+
+    /**
+     * Token do vendedor no Pagamento Digital.
+     *
+     * @var string $lojaToken
+     *
+     * @ORM\Column(name="loja_token", type="string", length=50, nullable=true)
+     */
+    private $lojaToken;
 
     /**
      * E-mail do cliente que fez a compra.
@@ -533,31 +553,31 @@ class Pagamento
     private $tipo_integracao;
 
     /**
-     * @var \DateTime $criado_em
-     *
-     * @ORM\Column(name="criado_em", type="datetime", nullable=true)
-     */
-    private $criado_em;
-
-    /**
-     * @var datetime $atualizado_em
-     *
-     *@ORM\Column(name="atualizado_em", type="datetime", nullable=true)
-     */
-    private $atualizado_em;
-
-
-    /**
      * @var ArrayCollection $itens
      *
      * @ORM\OneToMany(targetEntity="PagamentoItem", mappedBy="pagamento", cascade={"all"})
      */
     private $itens;
+
+    /**
+     * @var \DateTime $created
+     *
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     */
+    private $created;
+
+    /**
+     * @var \DateTime $updated
+     *
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime")
+     */
+    private $updated;
     
     function __construct()
     {
         $this->itens = new ArrayCollection();
-        $this->criado_em = new \DateTime();
         $this->tipo_integracao = 'PAD';
         $this->frete = 0;
     }
@@ -1225,39 +1245,7 @@ class Pagamento
     }
 
     /**
-     * @param \DateTime $criado_em
-     */
-    public function setCriadoEm($criado_em)
-    {
-        $this->criado_em = $criado_em;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCriadoEm()
-    {
-        return $this->criado_em;
-    }
-
-    /**
-     * @param \BFOS\PagamentoDigitalBundle\Entity\datetime $atualizado_em
-     */
-    public function setAtualizadoEm($atualizado_em)
-    {
-        $this->atualizado_em = $atualizado_em;
-    }
-
-    /**
-     * @return \BFOS\PagamentoDigitalBundle\Entity\datetime
-     */
-    public function getAtualizadoEm()
-    {
-        return $this->atualizado_em;
-    }
-
-    /**
-     * @return \BFOS\PagamentoDigitalBundle\Entity\ArrayCollection
+     * @return ArrayCollection
      */
     public function getItens()
     {
@@ -1265,7 +1253,7 @@ class Pagamento
     }
 
     /**
-     * @param \BFOS\PagamentoDigitalBundle\Entity\ArrayCollection $itens
+     * @param ArrayCollection $itens
      */
     public function setItens($itens)
     {
@@ -1278,6 +1266,16 @@ class Pagamento
     public function addItem(PagamentoItem $item){
         $item->setPagamento($this);
         $this->itens[] = $item;
+    }
+
+    /**
+     * Remove itens
+     *
+     * @param \BFOS\PagamentoDigitalBundle\Entity\PagamentoItem $item
+     */
+    public function removeItem(\BFOS\PagamentoDigitalBundle\Entity\PagamentoItem $item)
+    {
+        $this->itens->removeElement($item);
     }
 
     // retorna um array com as propriedades desta classe
@@ -1317,8 +1315,6 @@ class Pagamento
         $arr['free'] = $this->getFree();
         $arr['hash'] = $this->getHash();
         $arr['tipo_integracao'] = $this->getTipoIntegracao();
-        $arr['criado_em'] = $this->getCriadoEm();
-        $arr['atualizado_em'] = $this->getAtualizadoEm();
 
         $arr_itens = array();
         foreach($this->getItens() as $item){
@@ -1328,5 +1324,98 @@ class Pagamento
         return $arr;
     }
 
+
+
+    /**
+     * Set lojaEmail
+     *
+     * @param string $lojaEmail
+     * @return Pagamento
+     */
+    public function setLojaEmail($lojaEmail)
+    {
+        $this->lojaEmail = $lojaEmail;
+    
+        return $this;
+    }
+
+    /**
+     * Get lojaEmail
+     *
+     * @return string 
+     */
+    public function getLojaEmail()
+    {
+        return $this->lojaEmail;
+    }
+
+    /**
+     * Set lojaToken
+     *
+     * @param string $lojaToken
+     * @return Pagamento
+     */
+    public function setLojaToken($lojaToken)
+    {
+        $this->lojaToken = $lojaToken;
+    
+        return $this;
+    }
+
+    /**
+     * Get lojaToken
+     *
+     * @return string 
+     */
+    public function getLojaToken()
+    {
+        return $this->lojaToken;
+    }
+
+    /**
+     * Set created
+     *
+     * @param \DateTime $created
+     * @return Pagamento
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+    
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime 
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return Pagamento
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+    
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime 
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
 
 }

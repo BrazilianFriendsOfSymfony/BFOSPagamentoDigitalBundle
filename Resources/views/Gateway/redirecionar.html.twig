@@ -1,13 +1,7 @@
-{#
-    Página de redirecionamento para o Pagamento Digital
-#}
-<title>{% block title %}Redirecionando ao Pagamento Digital{% endblock %}</title>
-
-{% block content %}
 
 <form name="pagamentodigital" action="https://www.pagamentodigital.com.br/checkout/pay/" method="post">
 
-    <input name="email_loja" type="hidden" value="{{ email_loja }}">
+    <input name="email_loja" type="hidden" value="{{ pagamento.lojaEmail }}">
 
     {% for item in pagamento.itens %}
         <input name="produto_codigo_{{ loop.index }}" type="hidden" value="{{ item.produtoCodigo }}">
@@ -18,8 +12,21 @@
 
     <input name="tipo_integracao" type="hidden" value="{{ pagamento.tipoIntegracao }}">
     <input name="frete" type="hidden" value="{{ pagamento.frete }}">
-
-    {#<input type="image" src="https://a248.e.akamai.net/f/248/96284/12h/imagem.pagamentodigital.com.br/webroot/img/bt_comprar.gif" value="Comprar" alt="Comprar" border="0" align="absbottom" >#}
+    {% if pagamento.urlRetorno is not empty %}
+    <input name="url_retorno" type="hidden" value="{{ pagamento.urlRetorno }}">
+    {% endif %}
+    {% if pagamento.urlAviso is not empty %}
+    <input name="url_aviso" type="hidden" value="{{ pagamento.urlAviso }}">
+    {% endif %}
+    {% if pagamento.idPedido is not empty %}
+    <input name="id_pedido" type="hidden" value="{{ pagamento.idPedido }}">
+    {% endif %}
+    {% if pagamento.email is not empty %}
+    <input name="email" type="hidden" value="{{ pagamento.email }}">
+    {% endif %}
+    {% if pagamento.nome is not empty %}
+    <input name="nome" type="hidden" value="{{ pagamento.nome }}">
+    {% endif %}
 
 </form>
 <p style="font-size:large;text-align:center; margin-top: 80px;">Você vai ser direcionado ao Pagamento Digital para efetuar o pagamento em <span id="counter"></span> segundos.  Depois de fazer o pagamento, o Pagamento Digital vai devolver você para o site <?php echo sfConfig::get('app_view_app_titulo')?>, onde você vai poder acessar seus cupons.  <a href="javascript:document.forms['pagamentodigital'].submit();">Clique aqui se a pagina não redirecionar automaticamente.</a></p>
@@ -38,5 +45,3 @@
     tick();
 
 </script>
-
-{% endblock  %}

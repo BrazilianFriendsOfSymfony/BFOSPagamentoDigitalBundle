@@ -6,12 +6,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * BFOS\PagamentoDigitalBundle\Entity\RespostaPagamentoItem
+ * BFOS\PagamentoDigitalBundle\Entity\TransacaoItem
  *
- * @ORM\Table(name="bfos_pagamentodigital_resposta_pagamento_item")
+ * @ORM\Table(name="bfos_pagamentodigital_transacao_item")
  * @ORM\Entity
  */
-class RespostaPagamentoItem
+class TransacaoItem
 {
     /**
      * @var integer $id
@@ -83,26 +83,14 @@ class RespostaPagamentoItem
     private $produto_extra;
 
     /**
-     * @var \DateTime $criado_em
+     * @var Transacao $resposta
      *
-     * @ORM\Column(name="criado_em", type="datetime", nullable=true)
-     */
-    private $criado_em;
-
-    function __construct() {
-
-        $this->criado_em = new \DateTime();
-    }
-
-    /**
-     * @var RespostaPagamento $resposta
-     *
-     * @ORM\ManyToOne(targetEntity="RespostaPagamento", inversedBy="resposta_itens")
+     * @ORM\ManyToOne(targetEntity="Transacao", inversedBy="resposta_itens")
      * @ORM\JoinColumn(name="resposta_id", referencedColumnName="id")
      *
      * @Assert\Type(type="RespostaPagamento")
      */
-    private $resposta;
+    private $transacao;
 
     /**
      * Get id
@@ -214,38 +202,6 @@ class RespostaPagamentoItem
         return $this->produto_extra;
     }
 
-    /**
-     * @param \DateTime $criado_em
-     */
-    public function setCriadoem($criado_em)
-    {
-        $this->criado_em = $criado_em;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCriadoem()
-    {
-        return $this->criado_em;
-    }
-
-    /**
-     * @param \BFOS\PagamentoDigitalBundle\Entity\RespostaPagamento $resposta
-     */
-    public function setResposta($resposta)
-    {
-        $this->resposta = $resposta;
-    }
-
-    /**
-     * @return \BFOS\PagamentoDigitalBundle\Entity\RespostaPagamento
-     */
-    public function getResposta()
-    {
-        return $this->resposta;
-    }
-
     // retorna um array com as propriedades desta classe
     public function toArray() {
         $arr = array();
@@ -254,8 +210,30 @@ class RespostaPagamentoItem
         $arr['produto_qtde'] = $this->getProdutoQtde();
         $arr['produto_valor'] = $this->getProdutoValor();
         $arr['produto_extra'] = $this->getProdutoExtra();
-        $arr['criado_em'] = $this->getCriadoem();
         return $arr;
     }
 
+
+    /**
+     * Set transacao
+     *
+     * @param \BFOS\PagamentoDigitalBundle\Entity\Transacao $transacao
+     * @return TransacaoItem
+     */
+    public function setTransacao(\BFOS\PagamentoDigitalBundle\Entity\Transacao $transacao = null)
+    {
+        $this->transacao = $transacao;
+    
+        return $this;
+    }
+
+    /**
+     * Get transacao
+     *
+     * @return \BFOS\PagamentoDigitalBundle\Entity\Transacao
+     */
+    public function getTransacao()
+    {
+        return $this->transacao;
+    }
 }

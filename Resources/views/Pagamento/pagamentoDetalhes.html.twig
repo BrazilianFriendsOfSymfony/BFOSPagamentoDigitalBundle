@@ -1,0 +1,92 @@
+<div class="pagamento-digital">
+
+    <table class="table table-striped">
+        <tbody>
+        <tr>
+            <th>Vendedor e-mail</th>
+            <td>{{ pagamento.email|default('') }}</td>
+        </tr>
+        <tr>
+            <th>Cliente nome</th>
+            <td>{{ pagamento.nome|default('') }}</td>
+        </tr>
+        <tr>
+            <th>Cliente e-mail</th>
+            <td>{{ pagamento.nome|default('') }}</td>
+        </tr>
+
+        </tbody>
+    </table>
+
+    {% if transacao is defined and transacao is not empty %}
+        <h3 class="mb-5">Detalhes da transação</h3>
+
+        <div class="transacao">
+            <table class="table table-striped">
+                <tr>
+                    <th>Data</th>
+                    <td>{{transacao.dataTransacao|date('d-m-Y')}}</td>
+                </tr>
+                <tr>
+                    <th>Vendedor e-mail</th>
+                    <td>{{transacao.emailVendedor}}</td>
+                </tr>
+                <tr>
+                    <th>Id Transação</th>
+                    <td>{{transacao.idTransacao}}</td>
+                </tr>
+                {% if transacao.dataCredito is not empty %}
+                <tr>
+                    <th>Data crédito</th>
+                    <td>{{transacao.dataCredito|date('d-m-Y')}}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <th>Valor original</th>
+                    <td>R$ {{ transacao.valorOriginal|number_format(2, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <th>Valor loja</th>
+                    <td>R$ {{transacao.valorLoja|number_format(2, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <th>Valor total</th>
+                    <td>R$ {{transacao.valorTotal|number_format(2, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <th>Valor desconto</th>
+                    <td>R$ {{transacao.desconto|number_format(2, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <th>Valor desconto programado</th>
+                    <td>R$ {{transacao.descontoProgramado|number_format(2, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <th>Valor acréscimo</th>
+                    <td>R$ {{transacao.acrescimo|number_format(2, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td>{{ transacao.status }} {% if transacao.dataAlteracaoStatus is not empty %}({{ transacao.dataAlteracaoStatus|date('d-m-Y H:i:s') }}){% endif %}</td>
+                </tr>
+                <tr>
+                    <th>Situações</th>
+                    <td>
+                        {% for situacao in transacao.situacoes %}
+                            {{situacao.dataAlteracaoStatus|date('d-m-Y H:i:s')}} {{ situacao.situacao }}<br/>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Cliente - Nome</th>
+                    <td>{{transacao.clienteNome}}</td>
+                </tr>
+                <tr>
+                    <th>Cliente - E-mail</th>
+                    <td>{{transacao.clienteEmail}}</td>
+                </tr>
+            </table>
+        </div>
+    {% endif %}
+
+</div>

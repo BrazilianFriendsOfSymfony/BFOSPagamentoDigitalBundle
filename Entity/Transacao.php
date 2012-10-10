@@ -3,14 +3,17 @@
 namespace BFOS\PagamentoDigitalBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
+
 /**
- * BFOS\PagamentoDigitalBundle\Entity\RespostaPagamento
+ * BFOS\PagamentoDigitalBundle\Entity\Transacao
+ * BFOSPagamentoDigitalBundle:Transacao
  *
- * @ORM\Table(name="bfos_pagamentodigital_resposta_pagamento")
- * @ORM\Entity(repositoryClass="BFOS\PagamentoDigitalBundle\Entity\RespostaPagamentoRepository")
+ * @ORM\Table(name="bfos_pagamentodigital_transacao")
+ * @ORM\Entity(repositoryClass="BFOS\PagamentoDigitalBundle\Entity\TransacaoRepository")
  */
-class RespostaPagamento
+class Transacao
 {
     /**
      * @var integer $id
@@ -39,7 +42,7 @@ class RespostaPagamento
      * Tipo: Data
      * Formato: Número máximo de 18 caracteres
      *
-     * @var date $data_transacao
+     * @var \DateTime $data_transacao
      *
      * @ORM\Column(name="data_transacao", type="date", nullable=true)
      */
@@ -65,7 +68,7 @@ class RespostaPagamento
      *
      * @var Decimal $valor_original
      *
-     * @ORM\Column(name="valor_original", type="decimal", nullable=true, scale=2, precision=10)
+     * @ORM\Column(name="valor_original", type="decimal", nullable=true, scale=2)
      */
     private $valor_original;
 
@@ -77,7 +80,7 @@ class RespostaPagamento
      *
      * @var Decimal $valor_loja
      *
-     * @ORM\Column(name="valor_loja", type="decimal", nullable=true, scale=2, precision=10)
+     * @ORM\Column(name="valor_loja", type="decimal", nullable=true, scale=2)
      */
     private $valor_loja;
 
@@ -89,7 +92,7 @@ class RespostaPagamento
      *
      * @var decimal $valor_total
      *
-     * @ORM\Column(name="valor_total", type="decimal", nullable=true, scale=2, precision=10)
+     * @ORM\Column(name="valor_total", type="decimal", nullable=true, scale=2)
      */
     private $valor_total;
 
@@ -101,9 +104,21 @@ class RespostaPagamento
      *
      * @var Decimal $desconto
      *
-     * @ORM\Column(name="desconto", type="decimal", nullable=true, scale=2, precision=10)
+     * @ORM\Column(name="desconto", type="decimal", nullable=true, scale=2)
      */
     private $desconto;
+
+    /**
+     * Valor total do desconto.
+     *
+     * Tipo: Numérico
+     * Formato: Número máximo de 11 caracteres
+     *
+     * @var float $descontoProgramado
+     *
+     * @ORM\Column(name="desconto_programado", type="decimal", nullable=true, scale=2)
+     */
+    private $descontoProgramado;
 
     /**
      * Valor total do acréscimo.
@@ -113,7 +128,7 @@ class RespostaPagamento
      *
      * @var Decimal $acrescimo
      *
-     * @ORM\Column(name="acrescimo", type="decimal", nullable=true, scale=2, precision=10)
+     * @ORM\Column(name="acrescimo", type="decimal", nullable=true, scale=2)
      */
     private $acrescimo;
 
@@ -156,11 +171,29 @@ class RespostaPagamento
      */
     private $status;
 
+    static public $status_label = array(
+        1 => 'Em Andamento',
+        3 => 'Aprovada',
+        4 => 'Concluída',
+        5 => 'Disputa',
+        6 => 'Devolvida',
+        7 => 'Cancelada',
+        8 => 'Chargeback'
+    );
+
+    const STATUS_EM_ANDAMENTO = 1;
+    const STATUS_APROVADA     = 3;
+    const STATUS_CONCLUIDA    = 4;
+    const STATUS_DISPUTA      = 5;
+    const STATUS_DEVOLVIDA    = 6;
+    const STATUS_CANCELADA    = 7;
+    const STATUS_CHARGEBACK   = 8;
+
     /**
      * Código do status da transação.
-     *          cod_status = 0 - Transação em Andamento = Pagamento Digital recebeu a transação, está analisando ou aguardando o pagamento.
-     *          cod_status = 1 - Transação Concluída = quando a transação já passou pelo o processo e foi finalizada, ou foi confirmado o pagamento.
-     *          cod_status = 2 - Transação Cancelada = por qualquer motivo a transação foi cancelada, pagamento foi negado, estornado, ocorreu um chargeback.
+     *          cod_status = 1 - Transação em Andamento = Pagamento Digital recebeu a transação, está analisando ou aguardando o pagamento.
+     *          cod_status = 4 - Transação Concluída = quando a transação já passou pelo o processo e foi finalizada, ou foi confirmado o pagamento.
+     *          cod_status = 7 - Transação Cancelada = por qualquer motivo a transação foi cancelada, pagamento foi negado, estornado, ocorreu um chargeback.
      *
      * Tipo: Alfa-Numérico
      * Formato: String com máximo de 50 caracteres
@@ -170,6 +203,37 @@ class RespostaPagamento
      * @ORM\Column(name="cod_status", type="integer", nullable=true)
      */
     private $cod_status;
+
+    /**
+     * @var \DateTime $dataAlteracaoStatus
+     *
+     * @ORM\Column(name="data_alteracao_status", type="datetime", nullable=true)
+     */
+    private $dataAlteracaoStatus;
+
+    /**
+     * Razao Social do cliente.
+     *
+     * Tipo: Alfa-Numérico
+     * Formato: String com máximo de 255 caracteres
+     *
+     * @var string $cliente_razao_social
+     *
+     * @ORM\Column(name="cliente_razao_social", type="string", length=255, nullable=true)
+     */
+    private $cliente_razao_social;
+
+    /**
+     * Nome Fantasia do cliente.
+     *
+     * Tipo: Alfa-Numérico
+     * Formato: String com máximo de 255 caracteres
+     *
+     * @var string $cliente_nome_fantasia
+     *
+     * @ORM\Column(name="cliente_nome_fantasia", type="string", length=255, nullable=true)
+     */
+    private $cliente_nome_fantasia;
 
     /**
      * Nome do cliente.
@@ -244,14 +308,26 @@ class RespostaPagamento
     private $cliente_estado_emissor_rg;
 
     /**
+     * CNPJ do cliente.
+     *
+     * Tipo: Alfa-Numérico
+     * Formato: String com máximo de 14 caracteres
+     *
+     * @var string $cliente_cnpj
+     *
+     * @ORM\Column(name="cliente_cnpj", type="string", length=14, nullable=true)
+     */
+    private $cliente_cnpj;
+
+    /**
      * CPF do cliente.
      *
      * Tipo: Alfa-Numérico
-     * Formato: String com máximo de 17 caracteres
+     * Formato: String com máximo de 9 caracteres
      *
      * @var string $cliente_cpf
      *
-     * @ORM\Column(name="cliente_cpf", type="string", length=17, nullable=true)
+     * @ORM\Column(name="cliente_cpf", type="string", length=9, nullable=true)
      */
     private $cliente_cpf;
 
@@ -273,11 +349,23 @@ class RespostaPagamento
      * Tipo: Alfa-Numérico
      * Formato: String com máximo de 10 caracteres
      *
-     * @var string $cliente_data_nascimento
+     * @var \DateTime $cliente_data_nascimento
      *
-     * @ORM\Column(name="cliente_data_nascimento", type="string", length=10, nullable=true)
+     * @ORM\Column(name="cliente_data_nascimento", type="date", nullable=true)
      */
     private $cliente_data_nascimento;
+
+    /**
+     * Telefone do cliente.
+     *
+     * Tipo: Alfa-Numérico
+     * Formato: String com máximo de 15 caracteres
+     *
+     * @var string $cliente_telefone
+     *
+     * @ORM\Column(name="cliente_telefone", type="string", length=15, nullable=true)
+     */
+    private $cliente_telefone;
 
     /**
      * Endereço do cliente.
@@ -354,12 +442,12 @@ class RespostaPagamento
     /**
      * Informa o valor do frete da transação.
      *
-     * @var integer $frete
+     * @var float $frete
      *
      * Tipo: Numérico
      * Formato: Número com máximo de 11 caracteres
      *
-     * @ORM\Column(name="frete", type="integer", nullable=true)
+     * @ORM\Column(name="frete", type="decimal", scale=2, nullable=true)
      */
     private $frete;
 
@@ -371,7 +459,7 @@ class RespostaPagamento
      *
      * @var string $tipo_frete
      *
-     * @ORM\Column(name="tipo_frete", type="string", length=30)
+     * @ORM\Column(name="tipo_frete", type="string", length=30, nullable=true)
      */
     private $tipo_frete;
 
@@ -424,32 +512,56 @@ class RespostaPagamento
     private $email_vendedor;
 
     /**
-     * O conteúdo de retorno do Pagamento Digital
+     * @var TransacaoItem $items
      *
-     * @var string $resposta_text
-     *
-     * @ORM\Column(name="resposta_text", type="string", length=1000, nullable=true)
+     * @ORM\OneToMany(targetEntity="TransacaoItem", mappedBy="transacao", cascade={"all"})
      */
-    private $resposta_text;
+    private $items;
 
     /**
-     * @var \DateTime $criado_em
+     * @var \Doctrine\Common\Collections\Collection $situacoes
      *
-     * @ORM\Column(name="criado_em", type="datetime", nullable=true)
+     * @ORM\OneToMany(targetEntity="TransacaoSituacao", mappedBy="transacao", cascade={"all"})
      */
-    private $criado_em;
+    private $situacoes;
 
     /**
-     * @var RespostaPagamentoItem $resposta_itens
+     * Código meio pagamento
      *
-     * @ORM\OneToMany(targetEntity="RespostaPagamentoItem", mappedBy="resposta", cascade={"all"})
+     * @var int $codigoMeioPagamento
+     *
+     * @ORM\Column(name="cod_meio_pagamento", type="integer", nullable=true)
      */
-    private $resposta_itens;
+    private $codigoMeioPagamento;
+
+    /**
+     * Meio pagamento
+     *
+     * @var string $meioPagamentoLabel
+     *
+     * @ORM\Column(name="meio_pagamento_label", type="string", length=50, nullable=true)
+     */
+    private $meioPagamentoLabel;
+
+    /**
+     * @var \DateTime $created
+     *
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     */
+    private $created;
+
+    /**
+     * @var \DateTime $updated
+     *
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime")
+     */
+    private $updated;
 
     function __construct() {
-
-        $this->resposta_itens = new ArrayCollection();
-        $this->criado_em = new \DateTime();
+        $this->items = new ArrayCollection();
+        $this->situacoes = new ArrayCollection();
     }
 
     /**
@@ -699,7 +811,11 @@ class RespostaPagamento
      */
     public function getCodStatus()
     {
-        return $this->cod_status;
+        if($this->cod_status){
+            return (integer) $this->cod_status;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -863,26 +979,6 @@ class RespostaPagamento
     }
 
     /**
-     * Set cliente_data_nascimento
-     *
-     * @param string $clienteDataNascimento
-     */
-    public function setClienteDataNascimento($clienteDataNascimento)
-    {
-        $this->cliente_data_nascimento = $clienteDataNascimento;
-    }
-
-    /**
-     * Get cliente_data_nascimento
-     *
-     * @return string 
-     */
-    public function getClienteDataNascimento()
-    {
-        return $this->cliente_data_nascimento;
-    }
-
-    /**
      * Set cliente_endereco
      *
      * @param string $clienteEndereco
@@ -1005,17 +1101,18 @@ class RespostaPagamento
     /**
      * Set frete
      *
-     * @param integer $frete
+     * @param float $frete
      */
     public function setFrete($frete)
     {
         $this->frete = $frete;
+        return $this;
     }
 
     /**
      * Get frete
      *
-     * @return integer 
+     * @return float
      */
     public function getFrete()
     {
@@ -1115,67 +1212,11 @@ class RespostaPagamento
     /**
      * Get email_vendedor
      *
-     * @return string 
+     * @return string
      */
     public function getEmailVendedor()
     {
         return $this->email_vendedor;
-    }
-
-    /**
-     * @param string $resposta_text
-     */
-    public function setRespostaText($resposta_text)
-    {
-        $this->resposta_text = $resposta_text;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRespostaText()
-    {
-        return $this->resposta_text;
-    }
-
-    /**
-     * @param \DateTime $criado_em
-     */
-    public function setCriadoEm($criado_em)
-    {
-        $this->criado_em = $criado_em;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCriadoEm()
-    {
-        return $this->criado_em;
-    }
-
-    /**
-     * @param \BFOS\PagamentoDigitalBundle\Entity\ArrayCollection $itens
-     */
-    public function setRespostaItens($itens)
-    {
-        $this->resposta_itens = new ArrayCollection();
-        foreach($itens as $item)
-            $this->addItem($item);
-    }
-
-    public function addItem(RespostaPagamentoItem $item){
-
-        $item->setResposta($this);
-        $this->resposta_itens[] = $item;
-    }
-
-    /**
-     * @return \BFOS\PagamentoDigitalBundle\Entity\RespostaPagamentoItem
-     */
-    public function getRespostaItens()
-    {
-        return $this->resposta_itens;
     }
 
     // retorna um array com as propriedades desta classe
@@ -1213,17 +1254,352 @@ class RespostaPagamento
         $arr['id_pedido'] = $this->getIdPedido();
         $arr['free'] = $this->getFree();
         $arr['email_vendedor'] = $this->getEmailVendedor();
-        $arr['resposta_text'] = $this->getRespostaText();
-        $arr['criado_em'] = $this->getCriadoEm();
+        $arr['created'] = $this->getCreated();
+        $arr['updated'] = $this->getUpdated();
 
-        $arr_resposta_itens = array();
-        foreach ($this->getRespostaItens() as $item) {
-            $arr_resposta_itens[] = $item->toArray();
+        $arr_items = array();
+        foreach ($this->getItems() as $item) {
+            $arr_items[] = $item->toArray();
         }
-        $arr['resposta_itens'] = $arr_resposta_itens;
+        $arr['items'] = $arr_items;
 
         return $arr;
     }
 
 
+
+    /**
+     * Add items
+     *
+     * @param \BFOS\PagamentoDigitalBundle\Entity\TransacaoItem $item
+     * @return Transacao
+     */
+    public function addItem(\BFOS\PagamentoDigitalBundle\Entity\TransacaoItem $item)
+    {
+        $item->setTransacao($this);
+        $this->items[] = $item;
+    
+        return $this;
+    }
+
+    /**
+     * Remove items
+     *
+     * @param \BFOS\PagamentoDigitalBundle\Entity\TransacaoItem $items
+     */
+    public function removeItem(\BFOS\PagamentoDigitalBundle\Entity\TransacaoItem $items)
+    {
+        $this->items->removeElement($items);
+    }
+
+    /**
+     * Get items
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getItems()
+    {
+        return $this->items;
+    }
+
+    /**
+     * Add situacoes
+     *
+     * @param \BFOS\PagamentoDigitalBundle\Entity\TransacaoSituacao $situacao
+     * @return Transacao
+     */
+    public function addSituacao(\BFOS\PagamentoDigitalBundle\Entity\TransacaoSituacao $situacao)
+    {
+        $situacao->setTransacao($this);
+        $this->situacoes[] = $situacao;
+    
+        return $this;
+    }
+
+    /**
+     * Remove situacoes
+     *
+     * @param \BFOS\PagamentoDigitalBundle\Entity\TransacaoSituacao $situacao
+     */
+    public function removeSituacao(\BFOS\PagamentoDigitalBundle\Entity\TransacaoSituacao $situacao)
+    {
+        $this->situacoes->removeElement($situacao);
+    }
+
+    /**
+     * Get situacoes
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSituacoes()
+    {
+        return $this->situacoes;
+    }
+
+    /**
+     * Set created
+     *
+     * @param \DateTime $created
+     * @return Transacao
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+    
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime 
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return Transacao
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+    
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime 
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
+
+
+    /**
+     * Set descontoProgramado
+     *
+     * @param float $descontoProgramado
+     * @return Transacao
+     */
+    public function setDescontoProgramado($descontoProgramado)
+    {
+        $this->descontoProgramado = $descontoProgramado;
+    
+        return $this;
+    }
+
+    /**
+     * Get descontoProgramado
+     *
+     * @return float 
+     */
+    public function getDescontoProgramado()
+    {
+        return $this->descontoProgramado;
+    }
+
+
+    /**
+     * Set codigoMeioPagamento
+     *
+     * @param integer $codigoMeioPagamento
+     * @return Transacao
+     */
+    public function setCodigoMeioPagamento($codigoMeioPagamento)
+    {
+        $this->codigoMeioPagamento = $codigoMeioPagamento;
+    
+        return $this;
+    }
+
+    /**
+     * Get codigoMeioPagamento
+     *
+     * @return integer 
+     */
+    public function getCodigoMeioPagamento()
+    {
+        return $this->codigoMeioPagamento;
+    }
+
+
+    /**
+     * Set meioPagamentoLabel
+     *
+     * @param string $meioPagamentoLabel
+     * @return Transacao
+     */
+    public function setMeioPagamentoLabel($meioPagamentoLabel)
+    {
+        $this->meioPagamentoLabel = $meioPagamentoLabel;
+    
+        return $this;
+    }
+
+    /**
+     * Get meioPagamentoLabel
+     *
+     * @return string 
+     */
+    public function getMeioPagamentoLabel()
+    {
+        return $this->meioPagamentoLabel;
+    }
+
+
+    /**
+     * Set dataAlteracaoStatus
+     *
+     * @param \DateTime $dataAlteracaoStatus
+     * @return Transacao
+     */
+    public function setDataAlteracaoStatus($dataAlteracaoStatus)
+    {
+        $this->dataAlteracaoStatus = $dataAlteracaoStatus;
+    
+        return $this;
+    }
+
+    /**
+     * Get dataAlteracaoStatus
+     *
+     * @return \DateTime 
+     */
+    public function getDataAlteracaoStatus()
+    {
+        return $this->dataAlteracaoStatus;
+    }
+
+    /**
+     * Set cliente_razao_social
+     *
+     * @param string $clienteRazaoSocial
+     * @return Transacao
+     */
+    public function setClienteRazaoSocial($clienteRazaoSocial)
+    {
+        $this->cliente_razao_social = $clienteRazaoSocial;
+    
+        return $this;
+    }
+
+    /**
+     * Get cliente_razao_social
+     *
+     * @return string 
+     */
+    public function getClienteRazaoSocial()
+    {
+        return $this->cliente_razao_social;
+    }
+
+    /**
+     * Set cliente_nome_fantasia
+     *
+     * @param string $clienteNomeFantasia
+     * @return Transacao
+     */
+    public function setClienteNomeFantasia($clienteNomeFantasia)
+    {
+        $this->cliente_nome_fantasia = $clienteNomeFantasia;
+    
+        return $this;
+    }
+
+    /**
+     * Get cliente_nome_fantasia
+     *
+     * @return string 
+     */
+    public function getClienteNomeFantasia()
+    {
+        return $this->cliente_nome_fantasia;
+    }
+
+    /**
+     * Set cliente_cnpj
+     *
+     * @param string $clienteCnpj
+     * @return Transacao
+     */
+    public function setClienteCnpj($clienteCnpj)
+    {
+        $this->cliente_cnpj = $clienteCnpj;
+    
+        return $this;
+    }
+
+    /**
+     * Get cliente_cnpj
+     *
+     * @return string 
+     */
+    public function getClienteCnpj()
+    {
+        return $this->cliente_cnpj;
+    }
+
+    /**
+     * Set cliente_data_nascimento
+     *
+     * @param \DateTime $clienteDataNascimento
+     * @return Transacao
+     */
+    public function setClienteDataNascimento($clienteDataNascimento)
+    {
+        $this->cliente_data_nascimento = $clienteDataNascimento;
+    
+        return $this;
+    }
+
+    /**
+     * Get cliente_data_nascimento
+     *
+     * @return \DateTime 
+     */
+    public function getClienteDataNascimento()
+    {
+        return $this->cliente_data_nascimento;
+    }
+
+    /**
+     * Set cliente_telefone
+     *
+     * @param string $clienteTelefone
+     * @return Transacao
+     */
+    public function setClienteTelefone($clienteTelefone)
+    {
+        $this->cliente_telefone = $clienteTelefone;
+    
+        return $this;
+    }
+
+    /**
+     * Get cliente_telefone
+     *
+     * @return string 
+     */
+    public function getClienteTelefone()
+    {
+        return $this->cliente_telefone;
+    }
+
+    /**
+     * Remove situacoes
+     *
+     * @param BFOS\PagamentoDigitalBundle\Entity\TransacaoSituacao $situacoes
+     */
+    public function removeSituacoe(\BFOS\PagamentoDigitalBundle\Entity\TransacaoSituacao $situacoes)
+    {
+        $this->situacoes->removeElement($situacoes);
+    }
 }

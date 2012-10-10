@@ -101,20 +101,6 @@ class PagamentoItem
      */
     private $produto_info_extra;
 
-    /**
-     * @var DateTime $criado_em
-     */
-    private $criado_em;
-
-    function __construct(){
-
-        $this->criado_em = new \DateTime();
-    }
-
-    /**
-     * @var DateTime $atualizado_em
-     */
-    private $atualizado_em;
 
     /**
      * @var string $pagamento
@@ -261,40 +247,9 @@ class PagamentoItem
         $arr['produto_info_extra'] = $this->getProdutoInfoExtra();
         $arr['produto_qtde'] = $this->getProdutoQtde();
         $arr['produto_valor'] = $this->getProdutoValor();
-        $arr['criado_em'] = $this->getCriadoEm();
 
         return $arr;
     }
 
-    /**
-     * @param \BFOS\PagamentoDigitalBundle\Entity\DateTime $atualizado_em
-     */
-    public function setAtualizadoEm($atualizado_em)
-    {
-        $this->atualizado_em = $atualizado_em;
-    }
 
-    /**
-     * @return \BFOS\PagamentoDigitalBundle\Entity\DateTime
-     */
-    public function getAtualizadoEm()
-    {
-        return $this->atualizado_em;
-    }
-
-    /**
-     * @param \BFOS\PagamentoDigitalBundle\Entity\DateTime $criado_em
-     */
-    public function setCriadoEm($criado_em)
-    {
-        $this->criado_em = $criado_em;
-    }
-
-    /**
-     * @return \BFOS\PagamentoDigitalBundle\Entity\DateTime
-     */
-    public function getCriadoEm()
-    {
-        return $this->criado_em;
-    }
 }
