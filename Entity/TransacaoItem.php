@@ -85,7 +85,7 @@ class TransacaoItem
     /**
      * @var Transacao $resposta
      *
-     * @ORM\ManyToOne(targetEntity="Transacao", inversedBy="resposta_itens")
+     * @ORM\ManyToOne(targetEntity="Transacao", inversedBy="items")
      * @ORM\JoinColumn(name="resposta_id", referencedColumnName="id")
      *
      * @Assert\Type(type="RespostaPagamento")
