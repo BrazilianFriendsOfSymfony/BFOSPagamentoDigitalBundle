@@ -65,7 +65,7 @@ class TwigExtension extends \Twig_Extension
         $rtransacao   = $this->container->get('doctrine')->getRepository('BFOSPagamentoDigitalBundle:Transacao');
         $transacao = $rtransacao->findOneBy($criteria_transacao);
 
-        return $this->env->render('BFOSPagseguroBundle:Pagamento:pagamentoDetalhes.html.twig',
+        return $this->env->render('BFOSPagamentoDigitalBundle:Pagamento:pagamentoDetalhes.html.twig',
             array(
                 'pagamento' => $pagamento,
                 'transacao' => $transacao
