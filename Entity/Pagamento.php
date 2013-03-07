@@ -348,7 +348,7 @@ class Pagamento
     /**
      * @var integer $frete
      *
-     * @ORM\Column(name="frete", type="integer")
+     * @ORM\Column(name="frete", type="decimal", scale=2, nullable=true)
      *
      * @Assert\NotBlank()
      * @Assert\Max(limit=99999999999, message="O valor inserido deve conter no máximo 11 dígitos!")
@@ -365,7 +365,7 @@ class Pagamento
      *
      * @var integer $desconto
      *
-     * @ORM\Column(name="desconto", type="integer", scale=2, nullable=true)
+     * @ORM\Column(name="desconto", type="decimal", scale=2, nullable=true)
      *
      * @Assert\Regex(pattern="/^\d*[0-9](\.[0-9]{2})?$/", message="O Valor deve conter somente duas casas decimais!")
      */
@@ -380,7 +380,7 @@ class Pagamento
      *
      * @var integer $acrescimo
      *
-     * @ORM\Column(name="acrescimo", type="integer", nullable=true, scale=2)
+     * @ORM\Column(name="acrescimo", type="decimal", scale=2, nullable=true)
      *
      * @Assert\Regex(pattern="/^\d*[0-9](\.[0-9]{2})?$/", message="O Valor deve conter somente duas casas decimais!")
      */
