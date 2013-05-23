@@ -27,6 +27,9 @@
     {% if pagamento.nome is not empty %}
     <input name="nome" type="hidden" value="{{ pagamento.nome }}">
     {% endif %}
+    {% if pagamento.desconto is not empty %}
+    <input name="desconto" type="hidden" value="{{ pagamento.desconto }}">
+    {% endif %}
 
 </form>
 <p style="font-size:large;text-align:center; margin-top: 80px;">{{ "Você vai ser direcionado ao Bcash para efetuar o pagamento em <span id='counter'></span> segundos. Depois de fazer o pagamento, o Bcash vai devolver você para este site."|trans|raw }}  <a href="javascript:document.forms['pagamentodigital'].submit();">{{ 'Clique aqui se a pagina não redirecionar automaticamente.'|trans }}</a></p>
